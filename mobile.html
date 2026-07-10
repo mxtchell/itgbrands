@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Customer IQ Mobile · ITG Brands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root{
+    --bg:#f4f5fb; --surface:#ffffff; --surface-2:#f0f1f7;
+    --border:#e4e6ef; --border-2:#d1d4e2;
+    --text:#0a0a14; --muted:#5c5e72; --muted-2:#8a8d9f;
+    --navy:#1a3a5c; --navy-2:#244a70; --navy-soft:#e8f0f7;
+    --accent:#c41230; --accent-2:#a30f28; --accent-soft:#ffeef1;
+    --good:#16a34a; --warn:#d97706; --risk:#c0392b;
+    --chip:#ffeef1; --chipText:#a30f28;
+    --shadow:0 1px 3px rgba(16,24,40,.06);
+    --radius:12px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;background:#1a1a2e;min-height:100vh;display:flex;align-items:center;justify-content:center}
+
+  /* Phone Frame */
+  .phone-frame{
+    width:390px;height:844px;
+    background:#0a0a14;
+    border-radius:54px;
+    padding:12px;
+    box-shadow:0 50px 100px -20px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1),inset 0 0 0 2px #2a2a3e;
+    position:relative;
+  }
+  .phone-frame:before{
+    content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);
+    width:120px;height:32px;background:#0a0a14;border-radius:20px;z-index:100;
+  }
+  .phone-screen{
+    width:100%;height:100%;
+    background:var(--bg);
+    border-radius:44px;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+
+  /* Status Bar */
+  .status-bar{
+    height:54px;padding:14px 28px 0;
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:14px;font-weight:600;color:var(--text);
+    background:var(--surface);
+  }
+  .status-bar .time{font-variant-numeric:tabular-nums}
+  .status-bar .icons{display:flex;gap:5px;align-items:center}
+  .status-bar .icons svg{width:16px;height:16px}
+
+  /* App Header */
+  .app-header{
+    background:var(--surface);
+    padding:8px 16px 12px;
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:12px;
+  }
+  .app-header .logo{
+    width:32px;height:32px;border-radius:8px;
+    background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:11px;
+  }
+  .app-header .title{font-weight:700;font-size:17px;letter-spacing:-0.02em}
+  .app-header .sub{font-size:11px;color:var(--muted);margin-top:1px}
+  .app-header .avatar{
+    margin-left:auto;width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:600;font-size:11px;
+  }
+
+  /* Tab Bar */
+  .tab-bar{
+    display:flex;gap:4px;padding:8px 12px;background:var(--surface);
+    border-bottom:1px solid var(--border);overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tab-bar::-webkit-scrollbar{display:none}
+  .tab{
+    padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;
+    color:var(--muted);white-space:nowrap;flex-shrink:0;
+  }
+  .tab.active{background:var(--accent);color:#fff}
+
+  /* Content */
+  .content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+
+  .section-label{
+    font-size:11px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;
+  }
+  .section-label:first-child{margin-top:0}
+
+  /* Agent Card */
+  .agent-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:12px;margin-bottom:10px;
+  }
+  .agent-card .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .agent-card .av{
+    width:32px;height:32px;border-radius:8px;
+    background:linear-gradient(135deg,var(--navy),var(--navy-2));
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:12px;flex-shrink:0;
+  }
+  .agent-card .name{font-weight:600;font-size:13px}
+  .agent-card .role{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .agent-card .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--good);
+    margin-left:auto;box-shadow:0 0 0 3px rgba(22,163,74,.2);
+  }
+  .agent-card .msg{font-size:13px;line-height:1.5;color:#3f3f4e}
+
+  /* Priority Card */
+  .priority-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:14px;margin-bottom:10px;
+    border-left:4px solid var(--navy);
+  }
+  .priority-card.hot{border-left-color:var(--risk);background:linear-gradient(to right,#fff8f8 0%,var(--surface) 30%)}
+  .priority-card.opp{border-left-color:var(--accent)}
+  .priority-card.intel{border-left-color:#3b82f6}
+  .priority-card .top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .priority-card .num{
+    width:36px;height:36px;border-radius:10px;background:var(--navy);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:16px;flex-shrink:0;
+  }
+  .priority-card.hot .num{background:var(--risk)}
+  .priority-card.opp .num{background:var(--accent)}
+  .priority-card.intel .num{background:#3b82f6}
+  .priority-card .tag{
+    font-size:9px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.06em;padding:3px 8px;border-radius:5px;
+    background:var(--surface-2);color:var(--muted);
+  }
+  .priority-card.hot .tag{background:#fef2f2;color:#b91c1c}
+  .priority-card.opp .tag{background:var(--accent-soft);color:var(--accent-2)}
+  .priority-card.intel .tag{background:#dbeafe;color:#1e40af}
+  .priority-card .val{margin-left:auto;text-align:right}
+  .priority-card .val .v{font-size:16px;font-weight:700;color:var(--text)}
+  .priority-card .val .l{font-size:9px;color:var(--muted);text-transform:uppercase}
+  .priority-card .store{font-weight:700;font-size:14px;letter-spacing:-0.01em;margin-bottom:4px}
+  .priority-card .why{font-size:12px;color:#3f3f4e;line-height:1.5}
+
+  /* KPI Row */
+  .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+  .kpi{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:10px;padding:12px;text-align:center;
+  }
+  .kpi .v{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+  .kpi .l{font-size:10px;color:var(--muted);margin-top:2px}
+
+  /* Store Detail */
+  .store-header{margin-bottom:16px}
+  .store-header h1{font-size:20px;font-weight:700;margin:0 0 4px;letter-spacing:-0.02em}
+  .store-header .sub{font-size:12px;color:var(--muted)}
+
+  .detail-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:14px;margin-bottom:12px;
+  }
+  .detail-card h2{font-size:14px;font-weight:700;margin:0 0 10px}
+  .detail-card p{font-size:13px;line-height:1.5;color:#3f3f4e;margin:0 0 8px}
+  .detail-card ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#3f3f4e}
+
+  .chip{
+    display:inline-block;padding:3px 8px;border-radius:5px;
+    background:var(--chip);color:var(--chipText);
+    font-size:10px;font-weight:600;
+  }
+  .chip.risk{background:#fef2f2;color:#b91c1c}
+  .chip.good{background:#ecfdf5;color:#047857}
+  .chip.warn{background:#fffbeb;color:#b45309}
+  .chip.navy{background:var(--navy-soft);color:var(--navy)}
+
+  /* Route List */
+  .route-item{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 0;border-bottom:1px solid var(--border);
+  }
+  .route-item:last-child{border-bottom:0}
+  .route-item .rnum{
+    width:28px;height:28px;border-radius:8px;background:var(--navy);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:12px;flex-shrink:0;
+  }
+  .route-item .rnum.risk{background:var(--risk)}
+  .route-item .rnum.warn{background:var(--warn)}
+  .route-item .rnum.good{background:var(--good)}
+  .route-item .rbody{flex:1;min-width:0}
+  .route-item .rname{font-weight:600;font-size:13px}
+  .route-item .raction{font-size:11px;color:var(--muted);margin-top:2px}
+  .route-item .rtime{font-size:12px;font-weight:600;color:var(--text)}
+
+  /* Insight Box */
+  .insight-box{
+    background:linear-gradient(135deg,var(--navy-soft),#f4f4ff);
+    border:1px solid var(--navy-soft);border-left:3px solid var(--navy);
+    border-radius:10px;padding:12px;margin-top:12px;
+  }
+  .insight-box .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);font-weight:700;margin-bottom:4px}
+  .insight-box .txt{font-size:12px;line-height:1.55;color:var(--text)}
+
+  /* Bottom Nav */
+  .bottom-nav{
+    display:flex;justify-content:space-around;
+    padding:8px 0 28px;background:var(--surface);
+    border-top:1px solid var(--border);
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    font-size:10px;color:var(--muted);font-weight:500;
+  }
+  .nav-item.active{color:var(--accent)}
+  .nav-item svg{width:22px;height:22px}
+  .nav-item.active svg{stroke:var(--accent)}
+
+  /* Steps */
+  .step{display:none}
+  .step.active{display:block;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/></svg>
+      </span>
+    </div>
+
+    <div class="app-header">
+      <img src="itg-logo.png" alt="ITG Brands" style="height:28px;width:auto;">
+      <div>
+        <div class="title">Customer IQ</div>
+        <div class="sub">Wednesday, July 16, 2026</div>
+      </div>
+      <div class="avatar">MJ</div>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active" data-step="1">Morning Brief</div>
+      <div class="tab" data-step="2">Store Intel</div>
+      <div class="tab" data-step="3">Battlecard</div>
+      <div class="tab" data-step="4">Visit Prep</div>
+      <div class="tab" data-step="5">Route</div>
+    </div>
+
+    <div class="content">
+      <!-- STEP 1: Morning Brief -->
+      <div class="step active" data-step="1">
+        <div class="section-label">Agent Updates</div>
+        <div class="agent-card">
+          <div class="head">
+            <div class="av">SI</div>
+            <div>
+              <div class="name">Store Intelligence</div>
+              <div class="role">Territory scan complete</div>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="msg">"8 stores have declining ITG share. 3 at risk of competitive takeover. 7-Eleven on Peachtree lost 2 facings to Reynolds."</div>
+        </div>
+
+        <div class="agent-card">
+          <div class="head">
+            <div class="av" style="background:linear-gradient(135deg,var(--accent),var(--accent-2))">RA</div>
+            <div>
+              <div class="name">Reactivation</div>
+              <div class="role">Order cadence watch</div>
+            </div>
+            <div class="dot" style="background:var(--accent)"></div>
+          </div>
+          <div class="msg">"Circle K on Memorial is 12 days overdue. Raj usually reorders every 8 days."</div>
+        </div>
+
+        <div class="section-label">Today's Priorities</div>
+
+        <div class="priority-card hot">
+          <div class="top">
+            <div class="num">1</div>
+            <span class="tag">At Risk</span>
+            <div class="val"><div class="v">$8.2K</div><div class="l">Monthly</div></div>
+          </div>
+          <div class="store">7-Eleven #12847 · Peachtree</div>
+          <div class="why">Lost 2 facings to Newport. Reynolds rep visited Thursday with display offer. Counter with Q3 program.</div>
+        </div>
+
+        <div class="priority-card opp">
+          <div class="top">
+            <div class="num">2</div>
+            <span class="tag">Opportunity</span>
+            <div class="val"><div class="v">+$2.4K</div><div class="l">Potential</div></div>
+          </div>
+          <div class="store">Kroger #1847 · Auburn Ave</div>
+          <div class="why">Only 52.9% Zone distribution at Kroger. This location doesn't carry Zone yet. Easy distribution win.</div>
+        </div>
+
+        <div class="priority-card">
+          <div class="top">
+            <div class="num">3</div>
+            <span class="tag">Reorder Due</span>
+            <div class="val"><div class="v">$4.1K</div><div class="l">Monthly</div></div>
+          </div>
+          <div class="store">Circle K #8834 · Memorial</div>
+          <div class="why">Raj typically reorders every 8 days. It's been 12. Quick check-in on stock levels.</div>
+        </div>
+
+        <div class="priority-card intel">
+          <div class="top">
+            <div class="num">4</div>
+            <span class="tag">Competitive</span>
+            <div class="val"><div class="v">$5.7K</div><div class="l">Monthly</div></div>
+          </div>
+          <div class="store">Walgreens #5102 · Roswell Rd</div>
+          <div class="why">Altria rep visiting weekly with Marlboro promos. Manager hasn't switched yet. Battlecard ready.</div>
+        </div>
+
+        <div class="priority-card">
+          <div class="top">
+            <div class="num">5</div>
+            <span class="tag">Distribution</span>
+            <div class="val"><div class="v">3</div><div class="l">Stores</div></div>
+          </div>
+          <div class="store">3 Murphy USA Locations</div>
+          <div class="why">99.8% Zone distribution nationally. Your 3 locations are in the 0.2% without. Guaranteed placements.</div>
+        </div>
+
+        <div class="section-label">This Week</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="v">47</div><div class="l">Accounts</div></div>
+          <div class="kpi"><div class="v">12</div><div class="l">Need Attention</div></div>
+          <div class="kpi"><div class="v">8</div><div class="l">Visits Today</div></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Store Intel -->
+      <div class="step" data-step="2">
+        <div class="store-header">
+          <h1>7-Eleven #12847</h1>
+          <div class="sub">Peachtree Rd NE · Linda Chen · 3 year relationship</div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi"><div class="v">$8.2K</div><div class="l">Monthly</div></div>
+          <div class="kpi"><div class="v">32%</div><div class="l">ITG Share</div></div>
+          <div class="kpi"><div class="v">7.2d</div><div class="l">Reorder</div></div>
+        </div>
+
+        <div class="detail-card">
+          <h2>What Changed Last Week</h2>
+          <p><span class="chip risk">Lost</span> Winston moved from eye-level to bottom shelf</p>
+          <p><span class="chip risk">Lost</span> Kool lost 1 facing to Newport</p>
+          <p><span class="chip warn">Alert</span> New Newport end cap display installed Thursday</p>
+        </div>
+
+        <div class="detail-card">
+          <h2>Relationship Context</h2>
+          <ul>
+            <li>Son just graduated Georgia State</li>
+            <li>Appreciates data-driven conversations</li>
+            <li>Frustrated with "pushy" Reynolds rep</li>
+            <li>Prefers morning visits before 10am</li>
+          </ul>
+        </div>
+
+        <div class="insight-box">
+          <div class="lbl">The Pattern</div>
+          <div class="txt">Reynolds making aggressive moves on Peachtree corridor. 3 accounts saw similar Newport pushes in 2 weeks. Bring Q3 display program with revenue projections.</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Battlecard -->
+      <div class="step" data-step="3">
+        <div class="store-header">
+          <h1>Competitive Battlecard</h1>
+          <div class="sub">Reynolds American · Active in your territory</div>
+        </div>
+
+        <div class="detail-card">
+          <h2>Their Current Promotions</h2>
+          <p><b>Newport:</b> $1.50 off carton + free end cap</p>
+          <p><b>Camel:</b> Buy 2 get 1 free Camel Crush</p>
+          <p><b>Grizzly:</b> New wintergreen SKU launch</p>
+        </div>
+
+        <div class="detail-card" style="background:#fef2f2;border-color:#fecaca">
+          <h2 style="color:#7f1d1d">Their Pitch</h2>
+          <ul style="color:#7f1d1d">
+            <li>"Newport is the #1 menthol brand"</li>
+            <li>"Better margins on carton deals"</li>
+            <li>"Free display equipment"</li>
+          </ul>
+        </div>
+
+        <div class="detail-card" style="background:#f0fdf4;border-color:#bbf7d0">
+          <h2 style="color:#14532d">Your Response</h2>
+          <ul style="color:#14532d">
+            <li>"Kool loyalty runs deeper — 30% repeat rate"</li>
+            <li>"Q3 program: display + $2 multi-pack"</li>
+            <li>"I'm here every week, not just for promos"</li>
+          </ul>
+        </div>
+
+        <div class="detail-card">
+          <h2>Recent Rep Activity</h2>
+          <p><b>7-Eleven Peachtree:</b> Thursday — end cap, Newport deal</p>
+          <p><b>Walgreens Roswell:</b> Tuesday — Camel Crush promo</p>
+          <p><b>Shell Buckhead:</b> Monday — Newport end cap</p>
+        </div>
+      </div>
+
+      <!-- STEP 4: Visit Prep -->
+      <div class="step" data-step="4">
+        <div class="store-header">
+          <h1>Visit: 7-Eleven #12847</h1>
+          <div class="sub">Live visit assistant</div>
+        </div>
+
+        <div class="detail-card">
+          <h2>Opening</h2>
+          <p>"Linda, congrats again on Marcus graduating — Georgia State, right? How's he settling into his new job?"</p>
+          <p style="font-size:11px;color:var(--muted)">She mentioned he was job hunting in May. Personal touch first.</p>
+        </div>
+
+        <div class="detail-card">
+          <h2>Transition to Business</h2>
+          <p>"I noticed some shelf changes when I walked in. Let me show you something interesting about velocity..."</p>
+          <p style="font-size:11px;color:var(--muted)">Lead with observation, not complaint.</p>
+        </div>
+
+        <div class="insight-box">
+          <div class="lbl">Primary Objective</div>
+          <div class="txt">Get Winston back to eye level. Restore Kool facing. Offer Q3 display program as the value exchange.</div>
+        </div>
+
+        <div class="detail-card" style="margin-top:12px">
+          <h2>If She Mentions Reynolds Offer</h2>
+          <p><b>Expected:</b> "Reynolds offered me a free end cap..."</p>
+          <p><b>Counter:</b> "Let me show you the math — your Kool velocity is 20% higher than Newport here."</p>
+        </div>
+      </div>
+
+      <!-- STEP 5: Route -->
+      <div class="step" data-step="5">
+        <div class="store-header">
+          <h1>Today's Route</h1>
+          <div class="sub">8 visits · 47 miles · 6.5 hours</div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi"><div class="v">8</div><div class="l">Visits</div></div>
+          <div class="kpi"><div class="v">47mi</div><div class="l">Distance</div></div>
+          <div class="kpi"><div class="v">$28K</div><div class="l">At Risk</div></div>
+        </div>
+
+        <div class="detail-card">
+          <div class="route-item">
+            <div class="rnum risk">1</div>
+            <div class="rbody">
+              <div class="rname">7-Eleven #12847 · Peachtree</div>
+              <div class="raction">Win back shelf position</div>
+            </div>
+            <div class="rtime">9:00</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum warn">2</div>
+            <div class="rbody">
+              <div class="rname">Walgreens #5102 · Roswell</div>
+              <div class="raction">Counter Reynolds pitch</div>
+            </div>
+            <div class="rtime">10:15</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum">3</div>
+            <div class="rbody">
+              <div class="rname">Murphy USA #1 · Buckhead</div>
+              <div class="raction">Zone placement sign-off</div>
+            </div>
+            <div class="rtime">11:30</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum">4</div>
+            <div class="rbody">
+              <div class="rname">Murphy USA #2 · Lenox</div>
+              <div class="raction">Zone placement sign-off</div>
+            </div>
+            <div class="rtime">12:30</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum good">5</div>
+            <div class="rbody">
+              <div class="rname">Kroger #1847 · Auburn Ave</div>
+              <div class="raction">Zone distribution pitch</div>
+            </div>
+            <div class="rtime">2:00</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum">6</div>
+            <div class="rbody">
+              <div class="rname">Circle K #8834 · Memorial</div>
+              <div class="raction">Check stock, take order</div>
+            </div>
+            <div class="rtime">3:15</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum">7</div>
+            <div class="rbody">
+              <div class="rname">Murphy USA #3 · Candler</div>
+              <div class="raction">Zone placement sign-off</div>
+            </div>
+            <div class="rtime">4:00</div>
+          </div>
+          <div class="route-item">
+            <div class="rnum">8</div>
+            <div class="rbody">
+              <div class="rname">Speedway #892 · Decatur</div>
+              <div class="raction">Relationship maintenance</div>
+            </div>
+            <div class="rtime">4:45</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" data-nav="1">
+        <i data-lucide="layout-grid"></i>
+        <span>Brief</span>
+      </div>
+      <div class="nav-item" data-nav="2">
+        <i data-lucide="store"></i>
+        <span>Stores</span>
+      </div>
+      <div class="nav-item" data-nav="3">
+        <i data-lucide="swords"></i>
+        <span>Intel</span>
+      </div>
+      <div class="nav-item" data-nav="5">
+        <i data-lucide="map"></i>
+        <span>Route</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+const tabs = document.querySelectorAll('.tab');
+const steps = document.querySelectorAll('.step');
+const navItems = document.querySelectorAll('.nav-item');
+
+function showStep(n) {
+  steps.forEach(s => s.classList.remove('active'));
+  tabs.forEach(t => t.classList.remove('active'));
+  navItems.forEach(nav => nav.classList.remove('active'));
+
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+  document.querySelector(`.tab[data-step="${n}"]`).classList.add('active');
+
+  const navItem = document.querySelector(`.nav-item[data-nav="${n}"]`);
+  if (navItem) navItem.classList.add('active');
+}
+
+tabs.forEach(t => t.addEventListener('click', () => showStep(t.dataset.step)));
+navItems.forEach(nav => nav.addEventListener('click', () => showStep(nav.dataset.nav)));
+</script>
+</body>
+</html>
