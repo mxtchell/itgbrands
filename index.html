@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=1280"/>
+<title>Customer IQ for ITG Brands · Agentic CRM Vision · AnswerRocket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f5fb; --surface:#ffffff; --surface-2:#f0f1f7;
+    --border:#e4e6ef; --border-2:#d1d4e2;
+    --text:#0a0a14; --muted:#5c5e72; --muted-2:#8a8d9f;
+    --navy:#1a3a5c; --navy-2:#244a70; --navy-soft:#e8f0f7;
+    --accent:#c41230; --accent-2:#a30f28; --accent-soft:#ffeef1;
+    --good:#16a34a; --warn:#d97706; --risk:#c0392b;
+    --chip:#ffeef1; --chipText:#a30f28;
+    --shadow-sm:0 1px 2px rgba(16,24,40,.04);
+    --shadow:0 1px 3px rgba(16,24,40,.06), 0 1px 2px rgba(16,24,40,.04);
+    --shadow-lg:0 10px 32px -12px rgba(16,24,40,.14), 0 4px 12px -4px rgba(16,24,40,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:'Inter',-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);font-size:18px;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01";letter-spacing:-0.005em}
+  body{min-height:100vh;display:flex;flex-direction:column}
+  header.topbar{background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--border);color:var(--text);padding:12px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+  .logo{padding:6px 12px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:13px;box-shadow:0 4px 12px -2px rgba(196,18,48,.4);letter-spacing:-0.02em}
+  .brand{font-weight:600;font-size:15px;letter-spacing:-0.01em}
+  .brand small{display:block;font-weight:400;font-size:11px;color:var(--muted);margin-top:1px}
+  .spacer{flex:1}
+  .persona{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);font-weight:500}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px}
+
+  .chapbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:6px;overflow-x:auto;font-size:12px}
+  .chap{padding:6px 12px;border-radius:8px;background:transparent;color:var(--muted);white-space:nowrap;font-weight:500;transition:all .15s;cursor:pointer}
+  .chap.active{background:var(--accent);color:#fff}
+  .chap:hover:not(.active){background:var(--surface-2)}
+  .chap .n{opacity:.5;margin-right:6px;font-variant-numeric:tabular-nums}
+
+  main{flex:1;padding:24px 28px 180px;max-width:1640px;margin:0 auto;width:100%;display:grid;grid-template-columns:220px 1fr 400px;gap:24px}
+  .sidenav{position:sticky;top:80px;align-self:start;padding:16px 12px;background:#0a0a14;border:1px solid #0a0a14;border-radius:var(--radius);box-shadow:var(--shadow-lg)}
+  .navitem{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px;font-size:16px;color:#b8b8c4;cursor:default;margin-bottom:3px;font-weight:500;transition:all .15s}
+  .navitem .ic{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.8}
+  .navitem.active{background:rgba(196,18,48,.15);color:#fff;font-weight:600;border-left:3px solid var(--accent);padding-left:11px}
+  .navitem.active .ic{opacity:1}
+  .navitem.agent{font-size:14px;padding:8px 14px}
+  .navitem.agent .ic{font-size:14px}
+  .navitem .dot{width:6px;height:6px;border-radius:50%;background:#16a34a;margin-left:auto;box-shadow:0 0 0 3px rgba(22,163,74,.2);animation:navpulse 2.2s infinite}
+  .navitem .dot.idle{background:#8a8d9f;box-shadow:0 0 0 3px rgba(138,141,159,.15);animation:none}
+  @keyframes navpulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .navsection{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);padding:16px 14px 6px;font-weight:700}
+
+  .stage{min-width:0}
+  .chatcol{position:sticky;top:80px;align-self:start;height:calc(100vh - 240px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  .chathead{background:var(--surface);border-bottom:1px solid var(--border);color:var(--text);padding:16px 20px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:10px;letter-spacing:-0.01em}
+  .chathead .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+  .chatbody{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:var(--surface)}
+  .msg{max-width:92%;padding:13px 16px;border-radius:18px;font-size:16px;line-height:1.5;animation:pop .25s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .msg.max{align-self:flex-start;background:#eceefb;color:#000;border-bottom-left-radius:4px}
+  .msg.user{align-self:flex-end;background:linear-gradient(180deg,var(--accent) 0%,var(--accent-2) 100%);color:#fff;border-bottom-right-radius:4px}
+  .msg.user .who{color:rgba(255,255,255,.75)}
+  .msg .who{font-size:10px;text-transform:uppercase;letter-spacing:.07em;opacity:.55;margin-bottom:3px;font-weight:600}
+  .chatinput{border-top:1px solid var(--border);padding:12px 14px;background:var(--surface);display:flex;gap:8px;align-items:center}
+  .chatinput input{flex:1;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;background:var(--surface-2);color:var(--muted);pointer-events:none;font-family:inherit}
+  .chatinput .send{width:36px;height:36px;border-radius:9px;background:var(--text);color:#fff;border:0;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+  .step{display:none}
+  .step.active{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .step-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  .step-head h1{margin:0;font-size:32px;color:var(--text);font-weight:700;letter-spacing:-0.025em}
+  .step-head .sub{color:var(--muted);font-size:16px;font-weight:500}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm)}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g5{grid-template-columns:repeat(5,1fr)}
+  .g6{grid-template-columns:repeat(6,1fr)}
+  h2{color:var(--text);font-size:21px;margin:0 0 12px;font-weight:600;letter-spacing:-0.015em}
+  h3{color:var(--text);font-size:17px;margin:18px 0 8px;font-weight:600;letter-spacing:-0.01em}
+  p{margin:7px 0;line-height:1.6;font-size:17px;color:#3f3f4e}
+  ul{margin:7px 0 7px 20px;font-size:17px;line-height:1.65;color:#3f3f4e}
+  .muted{color:var(--muted)}
+  .chip{display:inline-block;padding:3px 9px;border-radius:6px;background:var(--chip);color:var(--chipText);font-size:11px;font-weight:600;margin-right:6px;letter-spacing:-0.005em}
+  .chip.risk{background:#fef2f2;color:#b91c1c}
+  .chip.good{background:#ecfdf5;color:#047857}
+  .chip.warn{background:#fffbeb;color:#b45309}
+  .chip.navy{background:var(--navy-soft);color:var(--navy)}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:left;box-shadow:var(--shadow-sm)}
+  .kpi .v{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+  .kpi .l{font-size:13px;color:var(--muted);margin-top:5px;font-weight:500}
+  .section-title{font-weight:600;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.06em;margin:20px 0 10px}
+
+  .max-say{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+  .max-say:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+  .max-av{width:34px;height:34px;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:14px;box-shadow:0 4px 12px -2px rgba(26,58,92,.4)}
+  .max-say .t{font-size:17px;line-height:1.6;color:var(--text)}
+  .max-say .who{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  td b{font-weight:600;color:var(--text)}
+  .score{display:inline-block;min-width:34px;text-align:center;padding:3px 8px;border-radius:6px;background:var(--navy-soft);color:var(--navy);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+  .score.warm{background:#fff6e6;color:#9a5b00}
+  .score.hot{background:#fef2f2;color:#b91c1c}
+  .score.cold{background:var(--surface-2);color:var(--muted)}
+
+  /* Store cards */
+  .store-card{display:flex;gap:14px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--surface);transition:all .15s}
+  .store-card:hover{border-color:var(--border-2);box-shadow:var(--shadow)}
+  .store-card .num{width:28px;height:28px;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+  .store-card .body{flex:1;min-width:0}
+  .store-card .name{font-weight:600;font-size:16px;letter-spacing:-0.01em}
+  .store-card .why{font-size:14px;color:var(--muted);margin-top:4px}
+  .store-card .tag{font-size:11px;padding:3px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted);font-weight:500;border:1px solid var(--border);margin-left:6px}
+
+  /* Agent cards */
+  .agent-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;display:flex;flex-direction:column;gap:8px}
+  .agent-card .ahead{display:flex;align-items:center;gap:10px}
+  .agent-card .aav{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+  .agent-card .aname{font-weight:700;font-size:15px;letter-spacing:-0.01em}
+  .agent-card .arole{font-size:11px;color:var(--muted);margin-top:1px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+  .agent-card .adot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(22,163,74,.2);margin-left:auto;animation:pulse-dot 1.8s infinite}
+  @keyframes pulse-dot{0%,100%{box-shadow:0 0 0 3px rgba(22,163,74,.2)}50%{box-shadow:0 0 0 6px rgba(22,163,74,.08)}}
+  .agent-card .amsg{font-size:14px;line-height:1.55;color:#3f3f4e}
+  .agent-card.working .adot{background:var(--accent);box-shadow:0 0 0 3px rgba(196,18,48,.2)}
+  .agent-card.monitor .adot{background:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
+
+  .source{display:inline-block;font-size:11px;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);padding:1px 7px;border-radius:5px;font-style:italic;margin-left:4px;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;cursor:default;white-space:nowrap;font-weight:500}
+  .source:hover{background:#e9eafa;color:var(--navy)}
+
+  /* Priority cards */
+  .priority-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:56px 1fr auto;gap:16px;align-items:center}
+  .priority-card.hot{border-left:4px solid var(--risk);background:linear-gradient(to right,#fff8f8 0%,var(--surface) 18%)}
+  .priority-card.opp{border-left:4px solid var(--accent)}
+  .priority-card.push{border-left:4px solid var(--navy)}
+  .priority-card.intel{border-left:4px solid #3b82f6}
+  .priority-card .dcnum{width:56px;height:56px;border-radius:14px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;box-shadow:0 4px 12px -2px rgba(26,58,92,.3)}
+  .priority-card.hot .dcnum{background:var(--risk);box-shadow:0 4px 12px -2px rgba(192,57,43,.35)}
+  .priority-card.opp .dcnum{background:var(--accent);box-shadow:0 4px 12px -2px rgba(196,18,48,.35)}
+  .priority-card.intel .dcnum{background:#3b82f6;box-shadow:0 4px 12px -2px rgba(59,130,246,.35)}
+  .priority-card .dcbody{min-width:0}
+  .priority-card .dctag{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:5px;margin-right:8px;background:var(--surface-2);color:var(--muted)}
+  .priority-card.hot .dctag{background:#fef2f2;color:#b91c1c}
+  .priority-card.opp .dctag{background:var(--accent-soft);color:var(--accent-2)}
+  .priority-card.push .dctag{background:var(--navy-soft);color:var(--navy)}
+  .priority-card.intel .dctag{background:#dbeafe;color:#1e40af}
+  .priority-card .dcname{font-size:17px;font-weight:700;letter-spacing:-0.01em;margin-top:6px}
+  .priority-card .dcwhy{font-size:14px;color:#3f3f4e;margin-top:5px;line-height:1.5}
+  .priority-card .dcval{text-align:right}
+  .priority-card .dcval .v{font-size:20px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em}
+  .priority-card .dcval .l{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+
+  /* Mix bars */
+  .mixrow{display:grid;grid-template-columns:100px 1fr 90px 90px;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+  .mixrow:last-child{border-bottom:0}
+  .mixrow .mlabel{font-weight:600;font-size:14px}
+  .mixrow .mbars{display:flex;flex-direction:column;gap:5px}
+  .mixrow .mbar{height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden;position:relative}
+  .mixrow .mfill{height:100%;border-radius:5px}
+  .mixrow .mfill.actual{background:var(--navy)}
+  .mixrow .mfill.pred{background:var(--accent);opacity:.5}
+  .mixrow .mlegend{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+  .mixrow .mval{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+  .mixrow .mdelta{font-size:13px;font-weight:700;padding:4px 8px;border-radius:6px;text-align:center;font-variant-numeric:tabular-nums}
+  .mixrow .mdelta.gap{background:#fef2f2;color:#b91c1c}
+  .mixrow .mdelta.ok{background:var(--surface-2);color:var(--muted)}
+  .mixrow .mdelta.over{background:#ecfdf5;color:#047857}
+
+  /* Battlecard */
+  .battle-split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .battle-col{padding:14px 16px;border-radius:10px;font-size:14px;line-height:1.55}
+  .battle-col.theirs{background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d}
+  .battle-col.ours{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d}
+  .battle-col .blbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;opacity:.8}
+  .battle-col ul{margin:4px 0 0 18px;padding:0;font-size:13.5px}
+  .battle-col li{margin-bottom:4px}
+
+  /* Insight card */
+  .insight-card{background:linear-gradient(135deg,var(--navy-soft),#f4f4ff);border:1px solid var(--navy-soft);border-left:4px solid var(--navy);border-radius:12px;padding:16px 20px;margin-top:14px}
+  .insight-card .ilbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);font-weight:800;margin-bottom:6px}
+  .insight-card .itext{font-size:15px;line-height:1.6;color:var(--text)}
+
+  /* Meeting callout */
+  .meeting-callout{background:#0a0a14;color:#fff;border-radius:12px;padding:16px 20px;margin-bottom:18px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 10px 28px -14px rgba(0,0,0,0.35);position:relative;overflow:hidden}
+  .meeting-callout.payoff{margin-top:22px;margin-bottom:0;background:linear-gradient(135deg,#0a0a14,#1a1a2e)}
+  .meeting-callout:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .meeting-callout .mc-ic{flex-shrink:0;width:38px;height:38px;border-radius:8px;background:rgba(196,18,48,0.15);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;letter-spacing:.04em}
+  .meeting-callout.payoff .mc-ic{background:rgba(196,18,48,0.2);font-size:16px}
+  .meeting-callout .mc-body{flex:1;min-width:0}
+  .meeting-callout .mc-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:8px}
+  .meeting-callout .mc-quote{font-size:15px;line-height:1.6;color:#e4e6ef;margin-bottom:8px;font-style:italic}
+  .meeting-callout .mc-text{font-size:15.5px;line-height:1.65;color:#e4e6ef;margin-bottom:0}
+  .meeting-callout .mc-text b{color:#fff;font-weight:600}
+  .meeting-callout .mc-attr{font-size:12px;color:#8a8d9f;font-weight:500}
+  .meeting-callout .mc-attr b{color:#fff;font-weight:600}
+  .meeting-callout .mc-addr{font-size:12.5px;color:#b8b8c4;margin-top:8px;line-height:1.5;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08)}
+  .meeting-callout .mc-addr b{color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:10px;display:block;margin-bottom:3px}
+
+  /* Dock */
+  .dock{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px;box-shadow:0 -10px 40px -10px rgba(16,24,40,.08)}
+  .dock .prompt{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:15px;line-height:1.5;color:var(--text)}
+  .dock .prompt .who{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:600}
+  .btn{background:var(--accent);color:#fff;border:0;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;letter-spacing:-0.01em;transition:all .15s}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 8px 16px -6px rgba(196,18,48,.3)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn.sec{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .counter{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:500}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">ITG</div>
+  <div class="brand">Customer IQ<small>Agentic CRM Vision · Built for ITG Brands</small></div>
+  <div class="spacer"></div>
+  <div class="persona"><div class="avatar">MJ</div><div>Marcus Johnson · Territory Sales Rep, Metro Atlanta</div></div>
+</header>
+
+<div class="chapbar">
+  <div class="chap active" data-step="1"><span class="n">1</span>Morning Brief</div>
+  <div class="chap" data-step="2"><span class="n">2</span>Store Intelligence</div>
+  <div class="chap" data-step="3"><span class="n">3</span>Competitive Intel</div>
+  <div class="chap" data-step="4"><span class="n">4</span>In-Store Visit</div>
+  <div class="chap" data-step="5"><span class="n">5</span>Route Optimization</div>
+</div>
+
+<main>
+<aside class="sidenav">
+  <div class="navsection">My Day</div>
+  <div class="navitem active"><span class="ic">🏠</span>Dashboard</div>
+  <div class="navitem"><span class="ic">📋</span>Morning Brief</div>
+  <div class="navitem"><span class="ic">🏪</span>My Accounts</div>
+  <div class="navitem"><span class="ic">📞</span>Calls & Visits</div>
+  <div class="navitem"><span class="ic">📅</span>Calendar</div>
+  <div class="navsection">Intelligence</div>
+  <div class="navitem"><span class="ic">📍</span>Territory Map</div>
+  <div class="navitem"><span class="ic">📊</span>Market Data</div>
+  <div class="navitem"><span class="ic">⚔️</span>Competitor Intel</div>
+  <div class="navitem"><span class="ic">📦</span>Promotions</div>
+  <div class="navsection">Agents</div>
+  <div class="navitem agent"><span class="ic">📈</span>Store Intel<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic">🔄</span>Reactivation<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic">🔍</span>Competitor<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic">🎯</span>Promo Push<span class="dot"></span></div>
+</aside>
+
+<div class="stage">
+  <!-- STEP 1: MORNING BRIEF -->
+  <section class="step active" data-step="1">
+    <div class="step-head">
+      <h1>Monday Morning Brief</h1>
+      <span class="sub">Monday · July 14, 2026 · 6:45 AM ET</span>
+    </div>
+
+    <div class="meeting-callout">
+      <div class="mc-ic">ITG</div>
+      <div class="mc-body">
+        <div class="mc-label">The Vision</div>
+        <div class="mc-text">An agentic CRM that guides a tobacco sales rep through their day — from the moment they wake up, to walking into each store, to competitive analysis. <b>Relationship building at scale.</b></div>
+        <div class="mc-addr"><b>What this chapter shows</b>Marcus didn't open a dashboard. The CRM ranked his day, with context on why each account needs attention and what to say when he walks in.</div>
+      </div>
+    </div>
+
+    <div class="max-say">
+      <div class="max-av">C</div>
+      <div>
+        <div class="who">CIQ Agent</div>
+        <div class="t">Good morning, Marcus. I've analyzed your 47 accounts in Metro Atlanta over the weekend. 5 stores need your attention today, and I know exactly what to discuss at each. Here's your agent roll call and today's priorities.</div>
+      </div>
+    </div>
+
+    <div class="section-title">Agent Roll Call · Weekend Activity</div>
+    <div class="grid g3">
+      <div class="agent-card">
+        <div class="ahead">
+          <div class="aav">SI</div>
+          <div>
+            <div class="aname">Store Intelligence</div>
+            <div class="arole">Territory scan complete</div>
+          </div>
+          <div class="adot"></div>
+        </div>
+        <div class="amsg">"I compared shelf space and velocity data across your territory. 8 stores have declining ITG share vs last quarter. 3 are at risk of competitive takeover. RaceTrac on Peachtree lost 2 facing positions to Reynolds last week."</div>
+      </div>
+      <div class="agent-card">
+        <div class="ahead">
+          <div class="aav" style="background:linear-gradient(135deg,var(--accent),var(--accent-2))">RA</div>
+          <div>
+            <div class="aname">Reactivation Agent</div>
+            <div class="arole">Order cadence watch</div>
+          </div>
+          <div class="adot" style="background:var(--accent);box-shadow:0 0 0 3px rgba(196,18,48,.2)"></div>
+        </div>
+        <div class="amsg">"4 accounts have slipped outside their normal reorder window. Circle K on Memorial Drive is 12 days overdue. Their manager, Raj Patel, usually reorders every 8 days. I drafted a check-in message."</div>
+      </div>
+      <div class="agent-card">
+        <div class="ahead">
+          <div class="aav" style="background:linear-gradient(135deg,#1e40af,#3b82f6)">PP</div>
+          <div>
+            <div class="aname">Promo Push Agent</div>
+            <div class="arole">New Kool promotion</div>
+          </div>
+          <div class="adot" style="background:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)"></div>
+        </div>
+        <div class="amsg">"The summer Kool menthol promotion went live Friday. I matched it against store demographics. 7 of your high-traffic urban stores are perfect fits. QuikTrip on Auburn Ave indexes 40% above average for menthol."</div>
+      </div>
+    </div>
+
+    <div class="section-title">Your 5 Priorities Today</div>
+
+    <div class="priority-card hot">
+      <div class="dcnum">1</div>
+      <div class="dcbody">
+        <span class="dctag">At Risk</span>
+        <span class="source">shelf audit + competitor tracking</span>
+        <div class="dcname">RaceTrac #4521 · 2847 Peachtree Rd NE</div>
+        <div class="dcwhy">Lost 2 facing positions to Newport (Reynolds) last week. Manager Linda Chen mentioned a Reynolds rep visited Thursday with a new display offer. Your relationship is strong here — you've had this account 3 years. I prepared talking points on our Q3 display program and a counter-offer on end cap placement.</div>
+      </div>
+      <div class="dcval">
+        <div class="v">$8.2K</div>
+        <div class="l">Monthly Volume</div>
+      </div>
+    </div>
+
+    <div class="priority-card opp">
+      <div class="dcnum">2</div>
+      <div class="dcbody">
+        <span class="dctag">Opportunity</span>
+        <span class="source">demographic analysis + promo fit</span>
+        <div class="dcname">QuikTrip #1847 · 456 Auburn Ave NE</div>
+        <div class="dcwhy">High foot traffic urban location. Menthol category indexes 40% above territory average, but Kool only has 12% share vs Newport's 45%. The new summer Kool promotion with $1 off multi-pack is a perfect fit. Store manager DeShawn Williams is receptive — he asked about promotions last visit.</div>
+      </div>
+      <div class="dcval">
+        <div class="v">+$2.4K</div>
+        <div class="l">Monthly Potential</div>
+      </div>
+    </div>
+
+    <div class="priority-card push">
+      <div class="dcnum">3</div>
+      <div class="dcbody">
+        <span class="dctag">Reorder Due</span>
+        <span class="source">order cadence analysis</span>
+        <div class="dcname">Circle K #8834 · 1920 Memorial Dr SE</div>
+        <div class="dcwhy">Raj Patel typically reorders every 8 days. It's been 12 days. No distress signals — likely just busy. Quick check-in to ensure stock levels. Winston and Maverick are his top sellers. I'll remind you of his daughter's college news (you discussed Georgia Tech last visit).</div>
+      </div>
+      <div class="dcval">
+        <div class="v">$4.1K</div>
+        <div class="l">Monthly Volume</div>
+      </div>
+    </div>
+
+    <div class="priority-card intel">
+      <div class="dcnum">4</div>
+      <div class="dcbody">
+        <span class="dctag">Competitive</span>
+        <span class="source">field intel + social listening</span>
+        <div class="dcname">Chevron · 3100 Roswell Rd NW</div>
+        <div class="dcwhy">Your contact Maria Gonzalez mentioned Altria's rep has been visiting weekly with Marlboro promotions. She's not switching yet, but they're testing a new display. You have a relationship advantage — you helped her with inventory tracking last quarter. Battlecard ready.</div>
+      </div>
+      <div class="dcval">
+        <div class="v">$5.7K</div>
+        <div class="l">Monthly Volume</div>
+      </div>
+    </div>
+
+    <div class="priority-card push">
+      <div class="dcnum">5</div>
+      <div class="dcbody">
+        <span class="dctag">New SKU</span>
+        <span class="source">product launch + store fit</span>
+        <div class="dcname">5 Buckhead Stores · blu Device Launch</div>
+        <div class="dcwhy">New blu 2.0 device launched this week. Higher-income Buckhead locations are the target demographic. Shell, BP, and 3 independent stores in the area have expressed interest in vape expansion. Quick introduction and sample program ready.</div>
+      </div>
+      <div class="dcval">
+        <div class="v">5</div>
+        <div class="l">Stores in Scope</div>
+      </div>
+    </div>
+
+    <div class="section-title">Your Week at a Glance</div>
+    <div class="grid g6">
+      <div class="kpi"><div class="v">47</div><div class="l">Accounts in Territory</div></div>
+      <div class="kpi"><div class="v">12</div><div class="l">Need Attention</div></div>
+      <div class="kpi"><div class="v">4</div><div class="l">Reorders Overdue</div></div>
+      <div class="kpi"><div class="v">3</div><div class="l">At-Risk Accounts</div></div>
+      <div class="kpi"><div class="v">8</div><div class="l">Visits Scheduled</div></div>
+      <div class="kpi"><div class="v">15</div><div class="l">Drafts Ready</div></div>
+    </div>
+
+    <div class="meeting-callout payoff">
+      <div class="mc-ic">$</div>
+      <div class="mc-body">
+        <div class="mc-label">The Payoff</div>
+        <div class="mc-text">Replaces 45 minutes of spreadsheet review every morning. Marcus walks into his day with a <b>ranked priority list</b>, context on every account, relationship reminders, and talking points ready. The CRM points him at the right doors. He owns the conversation.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2: STORE INTELLIGENCE -->
+  <section class="step" data-step="2">
+    <div class="step-head">
+      <h1>RaceTrac #4521</h1>
+      <span class="sub">2847 Peachtree Rd NE · Linda Chen, Manager · 3 year relationship</span>
+    </div>
+
+    <div class="max-say">
+      <div class="max-av">C</div>
+      <div>
+        <div class="who">CIQ Agent</div>
+        <div class="t">Here's everything you need to know before walking into Linda's store. Shelf position changes, competitor activity, order history, and the relationship context that matters. Reynolds made a move last week — here's how to respond.</div>
+      </div>
+    </div>
+
+    <div class="grid g4" style="margin-bottom:18px">
+      <div class="kpi"><div class="v">$8.2K</div><div class="l">Monthly Volume</div></div>
+      <div class="kpi"><div class="v">24</div><div class="l">ITG SKUs Carried</div></div>
+      <div class="kpi"><div class="v">32%</div><div class="l">ITG Share of Shelf</div></div>
+      <div class="kpi"><div class="v">7.2</div><div class="l">Days Avg Reorder</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Category Share: ITG vs Competition</h2>
+      <p class="muted" style="font-size:14px;margin-bottom:14px">Shelf facing positions and velocity data from last audit. <span class="source">shelf audit 7/10/26</span></p>
+
+      <div class="mixrow">
+        <div class="mlabel">Cigarettes</div>
+        <div class="mbars">
+          <div class="mbar"><div class="mfill actual" style="width:32%"></div></div>
+          <div class="mbar"><div class="mfill pred" style="width:38%"></div></div>
+          <div class="mlegend"><span>Current 32%</span><span>Target 38%</span></div>
+        </div>
+        <div class="mval">18 facings</div>
+        <div class="mdelta gap">−2 lost</div>
+      </div>
+
+      <div class="mixrow">
+        <div class="mlabel">Cigars</div>
+        <div class="mbars">
+          <div class="mbar"><div class="mfill actual" style="width:45%"></div></div>
+          <div class="mbar"><div class="mfill pred" style="width:40%"></div></div>
+          <div class="mlegend"><span>Current 45%</span><span>Target 40%</span></div>
+        </div>
+        <div class="mval">12 facings</div>
+        <div class="mdelta over">+2 above</div>
+      </div>
+
+      <div class="mixrow">
+        <div class="mlabel">Vape/blu</div>
+        <div class="mbars">
+          <div class="mbar"><div class="mfill actual" style="width:15%"></div></div>
+          <div class="mbar"><div class="mfill pred" style="width:25%"></div></div>
+          <div class="mlegend"><span>Current 15%</span><span>Target 25%</span></div>
+        </div>
+        <div class="mval">4 facings</div>
+        <div class="mdelta gap">Opportunity</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>What Changed Last Week</h2>
+      <table>
+        <tr>
+          <th>Change</th>
+          <th>Details</th>
+          <th>Impact</th>
+        </tr>
+        <tr>
+          <td><span class="chip risk">Lost Position</span></td>
+          <td><b>Winston</b> moved from eye-level to bottom shelf</td>
+          <td>Est. −15% velocity</td>
+        </tr>
+        <tr>
+          <td><span class="chip risk">Lost Position</span></td>
+          <td><b>Kool</b> lost 1 facing to Newport</td>
+          <td>Est. −8% velocity</td>
+        </tr>
+        <tr>
+          <td><span class="chip warn">Competitor</span></td>
+          <td>New Newport end cap display installed Thursday</td>
+          <td>High visibility</td>
+        </tr>
+      </table>
+
+      <div class="insight-card">
+        <div class="ilbl">The Pattern</div>
+        <div class="itext">Reynolds reps have been making aggressive moves on Peachtree corridor stores. 3 of your accounts in this area saw similar Newport pushes in the last 2 weeks. Linda hasn't committed to anything yet — she mentioned wanting to "see the numbers" before making changes. Bring the Q3 display program with revenue projections.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Relationship Context</h2>
+      <p><b>Linda Chen</b> has managed this location for 4 years. You've built a solid relationship over 3 years of visits.</p>
+      <ul>
+        <li>Her son just graduated from Georgia State (you congratulated her in May)</li>
+        <li>She appreciates data-driven conversations — always wants to see the numbers</li>
+        <li>Previously mentioned frustration with Reynolds rep being "too pushy"</li>
+        <li>Prefers morning visits before 10am rush</li>
+      </ul>
+    </div>
+
+    <div class="meeting-callout payoff">
+      <div class="mc-ic">$</div>
+      <div class="mc-body">
+        <div class="mc-label">The Payoff</div>
+        <div class="mc-text">Marcus walks in knowing exactly what changed, why it matters, and what Linda cares about. He's not asking "how's business?" — he's saying <b>"I noticed Newport took your eye-level Winston spot last week. Let me show you why that's costing you $400/month and how our Q3 program fixes it."</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3: COMPETITIVE INTEL -->
+  <section class="step" data-step="3">
+    <div class="step-head">
+      <h1>Competitive Battlecard</h1>
+      <span class="sub">Reynolds American (Newport, Camel) · Active in your territory</span>
+    </div>
+
+    <div class="max-say">
+      <div class="max-av">C</div>
+      <div>
+        <div class="who">CIQ Agent</div>
+        <div class="t">Reynolds has been aggressive in Metro Atlanta this quarter. I've compiled their current promotions, rep activity in your territory, and talking points for when store managers bring up their offers. Here's your battlecard.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Reynolds Current Promotions</h2>
+      <table>
+        <tr>
+          <th>Brand</th>
+          <th>Promotion</th>
+          <th>Your Counter</th>
+        </tr>
+        <tr>
+          <td><b>Newport</b></td>
+          <td>$1.50 off carton + free end cap display</td>
+          <td>ITG Q3 display program + $2 off multi-pack Kool</td>
+        </tr>
+        <tr>
+          <td><b>Camel</b></td>
+          <td>Buy 2 get 1 free on Camel Crush</td>
+          <td>Winston value pricing + loyalty rebate</td>
+        </tr>
+        <tr>
+          <td><b>Grizzly</b></td>
+          <td>New wintergreen SKU launch with sampling</td>
+          <td>Highlight existing smokeless relationships</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>When They Say Newport...</h2>
+      <div class="battle-split">
+        <div class="battle-col theirs">
+          <div class="blbl">Their Pitch</div>
+          <ul>
+            <li>"Newport is the #1 menthol brand"</li>
+            <li>"Better margins on carton deals"</li>
+            <li>"Free display equipment"</li>
+            <li>"Stronger brand recognition"</li>
+          </ul>
+        </div>
+        <div class="battle-col ours">
+          <div class="blbl">Your Response</div>
+          <ul>
+            <li>"Kool loyalty runs deeper in Atlanta — 30% repeat purchase rate"</li>
+            <li>"Our Q3 program includes display + $2 multi-pack discount"</li>
+            <li>"ITG service: I'm here every week, not just for promotions"</li>
+            <li>"Look at your velocity data — Kool customers buy more frequently"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Reynolds Rep Activity in Your Territory</h2>
+      <p class="muted" style="font-size:14px">Based on store manager conversations and field intel</p>
+      <table>
+        <tr>
+          <th>Store</th>
+          <th>Last Visit</th>
+          <th>What They Pitched</th>
+        </tr>
+        <tr>
+          <td><b>RaceTrac #4521</b></td>
+          <td>Thursday 7/10</td>
+          <td>End cap display, Newport carton deal</td>
+        </tr>
+        <tr>
+          <td><b>Chevron Roswell</b></td>
+          <td>Tuesday 7/8</td>
+          <td>Camel Crush promotion, new display</td>
+        </tr>
+        <tr>
+          <td><b>Shell Buckhead</b></td>
+          <td>Monday 7/7</td>
+          <td>Newport end cap, volume discount</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="meeting-callout payoff">
+      <div class="mc-ic">$</div>
+      <div class="mc-body">
+        <div class="mc-label">The Payoff</div>
+        <div class="mc-text">Marcus never gets caught off guard when a store manager says "Reynolds offered me..." He knows their playbook, has a counter ready, and can <b>reframe the conversation around relationship and service</b> — not just price.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4: IN-STORE VISIT -->
+  <section class="step" data-step="4">
+    <div class="step-head">
+      <h1>In-Store: RaceTrac #4521</h1>
+      <span class="sub">Live visit assistant · 9:15 AM</span>
+    </div>
+
+    <div class="max-say">
+      <div class="max-av">C</div>
+      <div>
+        <div class="who">CIQ Agent</div>
+        <div class="t">You just arrived at Linda's store. Here's your 60-second prep: what to open with, the key ask, and conversation starters that build the relationship. I'll track the visit and log outcomes automatically.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your Game Plan</h2>
+      <div class="grid g2">
+        <div>
+          <h3>Opening</h3>
+          <p>"Linda, congrats again on Marcus graduating — Georgia State, right? How's he settling into his new job?"</p>
+          <p class="muted" style="font-size:14px">She mentioned he was job hunting in May. Personal touch first.</p>
+        </div>
+        <div>
+          <h3>Transition to Business</h3>
+          <p>"I noticed some shelf changes when I walked in. Let me show you something interesting about what that's doing to your velocity..."</p>
+          <p class="muted" style="font-size:14px">Lead with observation, not complaint.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Key Ask This Visit</h2>
+      <div class="insight-card" style="margin-top:0">
+        <div class="ilbl">Primary Objective</div>
+        <div class="itext">Get Winston back to eye level and restore the Kool facing. Offer the Q3 display program as the value exchange. Secondary: introduce blu 2.0 device for the vape section — she mentioned wanting to expand vape last quarter.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>If She Mentions Reynolds Offer</h2>
+      <p><b>Expected objection:</b> "The Reynolds rep offered me a free end cap for Newport..."</p>
+      <p><b>Your response:</b> "I hear you. Let me show you the math — your Kool velocity is 20% higher than Newport in stores with similar demographics. The end cap looks good, but here's what it actually does to your margin..."</p>
+      <p class="muted" style="font-size:14px">Pull up the velocity comparison on your tablet. Data wins with Linda.</p>
+    </div>
+
+    <div class="meeting-callout payoff">
+      <div class="mc-ic">$</div>
+      <div class="mc-body">
+        <div class="mc-label">The Payoff</div>
+        <div class="mc-text">Every store visit becomes a <b>prepared, relationship-first conversation</b>. Marcus isn't winging it — he knows what changed, what to ask for, and how to handle objections. The CRM made him the most prepared rep who walks through Linda's door.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 5: ROUTE OPTIMIZATION -->
+  <section class="step" data-step="5">
+    <div class="step-head">
+      <h1>Today's Optimized Route</h1>
+      <span class="sub">8 visits · 47 miles · Est. 6.5 hours</span>
+    </div>
+
+    <div class="max-say">
+      <div class="max-av">C</div>
+      <div>
+        <div class="who">CIQ Agent</div>
+        <div class="t">I've optimized your route based on priority, geography, and store manager availability. Linda at RaceTrac prefers morning visits. DeShawn at QuikTrip takes lunch at 1pm. Here's the sequence that maximizes your day.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Recommended Sequence</h2>
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Store</th>
+          <th>Priority</th>
+          <th>Key Action</th>
+        </tr>
+        <tr>
+          <td><b>9:00 AM</b></td>
+          <td>RaceTrac #4521 · Peachtree</td>
+          <td><span class="chip risk">At Risk</span></td>
+          <td>Win back shelf position</td>
+        </tr>
+        <tr>
+          <td><b>10:15 AM</b></td>
+          <td>Chevron · Roswell Rd</td>
+          <td><span class="chip warn">Competitive</span></td>
+          <td>Counter Reynolds pitch</td>
+        </tr>
+        <tr>
+          <td><b>11:30 AM</b></td>
+          <td>Shell · Buckhead</td>
+          <td><span class="chip navy">New SKU</span></td>
+          <td>blu 2.0 introduction</td>
+        </tr>
+        <tr>
+          <td><b>12:30 PM</b></td>
+          <td>BP · Lenox</td>
+          <td><span class="chip navy">New SKU</span></td>
+          <td>blu 2.0 introduction</td>
+        </tr>
+        <tr>
+          <td><b>2:00 PM</b></td>
+          <td>QuikTrip #1847 · Auburn Ave</td>
+          <td><span class="chip good">Opportunity</span></td>
+          <td>Kool promo pitch</td>
+        </tr>
+        <tr>
+          <td><b>3:15 PM</b></td>
+          <td>Circle K #8834 · Memorial</td>
+          <td><span class="chip">Reorder</span></td>
+          <td>Check stock, take order</td>
+        </tr>
+        <tr>
+          <td><b>4:00 PM</b></td>
+          <td>Murphy USA · Candler</td>
+          <td><span class="chip">Routine</span></td>
+          <td>Relationship maintenance</td>
+        </tr>
+        <tr>
+          <td><b>4:45 PM</b></td>
+          <td>Mapco · Decatur</td>
+          <td><span class="chip">Routine</span></td>
+          <td>Relationship maintenance</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="grid g4" style="margin-top:18px">
+      <div class="kpi"><div class="v">8</div><div class="l">Store Visits</div></div>
+      <div class="kpi"><div class="v">47 mi</div><div class="l">Total Distance</div></div>
+      <div class="kpi"><div class="v">6.5 hrs</div><div class="l">Est. Time</div></div>
+      <div class="kpi"><div class="v">$28K</div><div class="l">Volume at Risk</div></div>
+    </div>
+
+    <div class="meeting-callout payoff">
+      <div class="mc-ic">$</div>
+      <div class="mc-body">
+        <div class="mc-label">The Payoff</div>
+        <div class="mc-text">Route optimization that's <b>actually intelligent</b> — not just geography, but timing (when managers are available), priority (at-risk accounts first), and preparation (talking points ready for each stop). Marcus ends each day knowing he hit the right doors in the right order.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<aside class="chatcol">
+  <div class="chathead"><span class="dot"></span>CIQ Agent · Active</div>
+  <div class="chatbody">
+    <div class="msg max">
+      <div class="who">CIQ</div>
+      Good morning, Marcus. Ready for your Monday brief? I've identified 5 priority accounts that need your attention today.
+    </div>
+    <div class="msg user">
+      <div class="who">You</div>
+      What's the situation at RaceTrac on Peachtree?
+    </div>
+    <div class="msg max">
+      <div class="who">CIQ</div>
+      Reynolds made a move last Thursday. Newport took 2 of your facing positions — Winston moved to bottom shelf, Kool lost a facing. Linda hasn't committed to anything yet. I've prepared our Q3 counter-offer with the display program.
+    </div>
+    <div class="msg user">
+      <div class="who">You</div>
+      Pull up the competitive battlecard for Reynolds.
+    </div>
+    <div class="msg max">
+      <div class="who">CIQ</div>
+      Loading battlecard... Their current pitch is $1.50 off Newport cartons plus free end cap. Your counter: Q3 display program with $2 off Kool multi-packs, plus our service advantage — you're there weekly, not just for promotions.
+    </div>
+  </div>
+  <div class="chatinput">
+    <input type="text" placeholder="Ask about any account, competitor, or route...">
+    <button class="send">→</button>
+  </div>
+</aside>
+</main>
+
+<div class="dock">
+  <div class="prompt">
+    <div class="who">Demo Flow</div>
+    Click through the chapters above to see how CIQ guides a tobacco sales rep through their day — from morning brief to in-store visits to competitive response.
+  </div>
+  <span class="counter">Chapter <span id="currentStep">1</span> of 5</span>
+  <button class="btn sec" id="prevBtn" disabled>← Previous</button>
+  <button class="btn" id="nextBtn">Next →</button>
+</div>
+
+<script>
+const steps = document.querySelectorAll('.step');
+const chaps = document.querySelectorAll('.chap');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const counter = document.getElementById('currentStep');
+let current = 1;
+
+function showStep(n) {
+  steps.forEach(s => s.classList.remove('active'));
+  chaps.forEach(c => c.classList.remove('active'));
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+  document.querySelector(`.chap[data-step="${n}"]`).classList.add('active');
+  counter.textContent = n;
+  prevBtn.disabled = n === 1;
+  nextBtn.disabled = n === 5;
+  current = n;
+}
+
+chaps.forEach(c => {
+  c.addEventListener('click', () => showStep(parseInt(c.dataset.step)));
+});
+
+prevBtn.addEventListener('click', () => { if (current > 1) showStep(current - 1); });
+nextBtn.addEventListener('click', () => { if (current < 5) showStep(current + 1); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && current < 5) showStep(current + 1);
+  if (e.key === 'ArrowLeft' && current > 1) showStep(current - 1);
+});
+</script>
+</body>
+</html>
