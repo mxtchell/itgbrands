@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
   :root{
     --bg:#f4f5fb; --surface:#ffffff; --surface-2:#f0f1f7;
@@ -41,7 +42,9 @@
   main{flex:1;padding:24px 28px 180px;max-width:1640px;margin:0 auto;width:100%;display:grid;grid-template-columns:220px 1fr 400px;gap:24px}
   .sidenav{position:sticky;top:80px;align-self:start;padding:16px 12px;background:#0a0a14;border:1px solid #0a0a14;border-radius:var(--radius);box-shadow:var(--shadow-lg)}
   .navitem{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px;font-size:16px;color:#b8b8c4;cursor:default;margin-bottom:3px;font-weight:500;transition:all .15s}
-  .navitem .ic{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.8}
+  .navitem .ic{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.7}
+  .navitem .ic svg{width:18px;height:18px;stroke:#8a8d9f;stroke-width:1.75}
+  .navitem.active .ic svg{stroke:#fff}
   .navitem.active{background:rgba(196,18,48,.15);color:#fff;font-weight:600;border-left:3px solid var(--accent);padding-left:11px}
   .navitem.active .ic{opacity:1}
   .navitem.agent{font-size:14px;padding:8px 14px}
@@ -233,21 +236,21 @@
 <main>
 <aside class="sidenav">
   <div class="navsection">My Day</div>
-  <div class="navitem active"><span class="ic">🏠</span>Dashboard</div>
-  <div class="navitem"><span class="ic">📋</span>Morning Brief</div>
-  <div class="navitem"><span class="ic">🏪</span>My Accounts</div>
-  <div class="navitem"><span class="ic">📞</span>Calls & Visits</div>
-  <div class="navitem"><span class="ic">📅</span>Calendar</div>
+  <div class="navitem active"><span class="ic"><i data-lucide="layout-grid"></i></span>Dashboard</div>
+  <div class="navitem"><span class="ic"><i data-lucide="sun"></i></span>Morning Brief</div>
+  <div class="navitem"><span class="ic"><i data-lucide="store"></i></span>My Accounts</div>
+  <div class="navitem"><span class="ic"><i data-lucide="phone"></i></span>Calls & Visits</div>
+  <div class="navitem"><span class="ic"><i data-lucide="calendar"></i></span>Calendar</div>
   <div class="navsection">Intelligence</div>
-  <div class="navitem"><span class="ic">📍</span>Territory Map</div>
-  <div class="navitem"><span class="ic">📊</span>Market Data</div>
-  <div class="navitem"><span class="ic">⚔️</span>Competitor Intel</div>
-  <div class="navitem"><span class="ic">📦</span>Promotions</div>
+  <div class="navitem"><span class="ic"><i data-lucide="map-pin"></i></span>Territory Map</div>
+  <div class="navitem"><span class="ic"><i data-lucide="bar-chart-2"></i></span>Market Data</div>
+  <div class="navitem"><span class="ic"><i data-lucide="swords"></i></span>Competitor Intel</div>
+  <div class="navitem"><span class="ic"><i data-lucide="tag"></i></span>Promotions</div>
   <div class="navsection">Agents</div>
-  <div class="navitem agent"><span class="ic">📈</span>Store Intel<span class="dot"></span></div>
-  <div class="navitem agent"><span class="ic">🔄</span>Reactivation<span class="dot"></span></div>
-  <div class="navitem agent"><span class="ic">🔍</span>Competitor<span class="dot"></span></div>
-  <div class="navitem agent"><span class="ic">🎯</span>Promo Push<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic"><i data-lucide="trending-up"></i></span>Store Intel<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic"><i data-lucide="refresh-cw"></i></span>Reactivation<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic"><i data-lucide="search"></i></span>Competitor<span class="dot"></span></div>
+  <div class="navitem agent"><span class="ic"><i data-lucide="target"></i></span>Promo Push<span class="dot"></span></div>
 </aside>
 
 <div class="stage">
@@ -804,6 +807,9 @@
 </div>
 
 <script>
+// Initialize Lucide icons
+lucide.createIcons();
+
 const steps = document.querySelectorAll('.step');
 const chaps = document.querySelectorAll('.chap');
 const prevBtn = document.getElementById('prevBtn');
