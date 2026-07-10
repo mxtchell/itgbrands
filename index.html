@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root{
     --bg:#f4f5fb; --surface:#ffffff; --surface-2:#f0f1f7;
@@ -394,13 +396,6 @@
       <div class="kpi"><div class="v">15</div><div class="l">Drafts Ready</div></div>
     </div>
 
-    <div class="meeting-callout payoff">
-      <div class="mc-ic">$</div>
-      <div class="mc-body">
-        <div class="mc-label">The Payoff</div>
-        <div class="mc-text">Replaces 45 minutes of spreadsheet review every morning. Marcus walks into his day with a <b>ranked priority list</b>, context on every account, relationship reminders, and talking points ready. The CRM points him at the right doors. He owns the conversation.</div>
-      </div>
-    </div>
   </section>
 
   <!-- STEP 2: STORE INTELLIGENCE -->
@@ -505,13 +500,6 @@
       </ul>
     </div>
 
-    <div class="meeting-callout payoff">
-      <div class="mc-ic">$</div>
-      <div class="mc-body">
-        <div class="mc-label">The Payoff</div>
-        <div class="mc-text">Marcus walks in knowing exactly what changed, why it matters, and what Linda cares about. He's not asking "how's business?" — he's saying <b>"I noticed Newport took your eye-level Winston spot last week. Let me show you why that's costing you $400/month and how our Q3 program fixes it."</b></div>
-      </div>
-    </div>
   </section>
 
   <!-- STEP 3: COMPETITIVE INTEL -->
@@ -606,13 +594,6 @@
       </table>
     </div>
 
-    <div class="meeting-callout payoff">
-      <div class="mc-ic">$</div>
-      <div class="mc-body">
-        <div class="mc-label">The Payoff</div>
-        <div class="mc-text">Marcus never gets caught off guard when a store manager says "Reynolds offered me..." He knows their playbook, has a counter ready, and can <b>reframe the conversation around relationship and service</b> — not just price.</div>
-      </div>
-    </div>
   </section>
 
   <!-- STEP 4: IN-STORE VISIT -->
@@ -661,13 +642,6 @@
       <p class="muted" style="font-size:14px">Pull up the velocity comparison on your tablet. Data wins with Linda.</p>
     </div>
 
-    <div class="meeting-callout payoff">
-      <div class="mc-ic">$</div>
-      <div class="mc-body">
-        <div class="mc-label">The Payoff</div>
-        <div class="mc-text">Every store visit becomes a <b>prepared, relationship-first conversation</b>. Marcus isn't winging it — he knows what changed, what to ask for, and how to handle objections. The CRM made him the most prepared rep who walks through Linda's door.</div>
-      </div>
-    </div>
   </section>
 
   <!-- STEP 5: ROUTE OPTIMIZATION -->
@@ -683,6 +657,11 @@
         <div class="who">CIQ Agent</div>
         <div class="t">I've optimized your route based on priority, geography, and store manager availability. Linda at RaceTrac prefers morning visits. DeShawn at QuikTrip takes lunch at 1pm. Here's the sequence that maximizes your day.</div>
       </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <h2>Territory Map</h2>
+      <div id="routeMap" style="height:340px;border-radius:10px;overflow:hidden;border:1px solid var(--border)"></div>
     </div>
 
     <div class="card">
@@ -752,13 +731,6 @@
       <div class="kpi"><div class="v">$28K</div><div class="l">Volume at Risk</div></div>
     </div>
 
-    <div class="meeting-callout payoff">
-      <div class="mc-ic">$</div>
-      <div class="mc-body">
-        <div class="mc-label">The Payoff</div>
-        <div class="mc-text">Route optimization that's <b>actually intelligent</b> — not just geography, but timing (when managers are available), priority (at-risk accounts first), and preparation (talking points ready for each stop). Marcus ends each day knowing he hit the right doors in the right order.</div>
-      </div>
-    </div>
   </section>
 </div>
 
@@ -823,6 +795,86 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' && current < 5) showStep(current + 1);
   if (e.key === 'ArrowLeft' && current > 1) showStep(current - 1);
 });
+
+// Initialize route map
+const stores = [
+  { name: "RaceTrac #4521", addr: "Peachtree Rd NE", lat: 33.8486, lng: -84.3625, priority: "risk" },
+  { name: "Chevron", addr: "Roswell Rd NW", lat: 33.8680, lng: -84.4076, priority: "warn" },
+  { name: "Shell", addr: "Buckhead", lat: 33.8400, lng: -84.3800, priority: "navy" },
+  { name: "BP", addr: "Lenox", lat: 33.8480, lng: -84.3620, priority: "navy" },
+  { name: "QuikTrip #1847", addr: "Auburn Ave NE", lat: 33.7550, lng: -84.3780, priority: "good" },
+  { name: "Circle K #8834", addr: "Memorial Dr SE", lat: 33.7400, lng: -84.3500, priority: "default" },
+  { name: "Murphy USA", addr: "Candler Rd", lat: 33.7280, lng: -84.3100, priority: "default" },
+  { name: "Mapco", addr: "Decatur", lat: 33.7750, lng: -84.2960, priority: "default" }
+];
+
+const priorityColors = {
+  risk: "#c0392b",
+  warn: "#d97706",
+  good: "#16a34a",
+  navy: "#1a3a5c",
+  default: "#5c5e72"
+};
+
+let map = null;
+
+function initMap() {
+  if (map) return;
+  const mapEl = document.getElementById('routeMap');
+  if (!mapEl || mapEl.offsetParent === null) return;
+
+  map = L.map('routeMap', { zoomControl: false }).setView([33.79, -84.35], 11);
+  L.control.zoom({ position: 'topright' }).addTo(map);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Add markers
+  stores.forEach((store, i) => {
+    const color = priorityColors[store.priority];
+    const marker = L.circleMarker([store.lat, store.lng], {
+      radius: 12,
+      fillColor: color,
+      color: '#fff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.9
+    }).addTo(map);
+
+    marker.bindTooltip(`<b>${i + 1}. ${store.name}</b><br>${store.addr}`, {
+      permanent: false,
+      direction: 'top',
+      offset: [0, -10]
+    });
+
+    // Add number label
+    const numIcon = L.divIcon({
+      className: 'route-number',
+      html: `<div style="background:${color};color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)">${i + 1}</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+    L.marker([store.lat, store.lng], { icon: numIcon }).addTo(map);
+  });
+
+  // Draw route line
+  const routeCoords = stores.map(s => [s.lat, s.lng]);
+  L.polyline(routeCoords, {
+    color: '#c41230',
+    weight: 3,
+    opacity: 0.7,
+    dashArray: '8, 8'
+  }).addTo(map);
+}
+
+// Initialize map when step 5 is shown
+const origShowStep = showStep;
+showStep = function(n) {
+  origShowStep(n);
+  if (n === 5) setTimeout(initMap, 100);
+};
 </script>
 </body>
 </html>
