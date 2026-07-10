@@ -39,7 +39,7 @@
   .chap:hover:not(.active){background:var(--surface-2)}
   .chap .n{opacity:.5;margin-right:6px;font-variant-numeric:tabular-nums}
 
-  main{flex:1;padding:24px 28px 180px;max-width:1640px;margin:0 auto;width:100%;display:grid;grid-template-columns:220px 1fr 400px;gap:24px}
+  main{flex:1;padding:24px 28px 40px;max-width:1640px;margin:0 auto;width:100%;display:grid;grid-template-columns:220px 1fr 400px;gap:24px}
   .sidenav{position:sticky;top:80px;align-self:start;padding:16px 12px;background:#0a0a14;border:1px solid #0a0a14;border-radius:var(--radius);box-shadow:var(--shadow-lg)}
   .navitem{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px;font-size:16px;color:#b8b8c4;cursor:default;margin-bottom:3px;font-weight:500;transition:all .15s}
   .navitem .ic{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.7}
@@ -56,8 +56,14 @@
 
   .stage{min-width:0}
   .chatcol{position:sticky;top:80px;align-self:start;height:calc(100vh - 240px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
-  .chathead{background:var(--surface);border-bottom:1px solid var(--border);color:var(--text);padding:16px 20px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:10px;letter-spacing:-0.01em}
+  .chathead{background:var(--surface);border-bottom:1px solid var(--border);color:var(--text);padding:16px 20px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:10px;letter-spacing:-0.01em;cursor:pointer;user-select:none}
   .chathead .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+  .chathead .toggle{margin-left:auto;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all .15s}
+  .chathead .toggle svg{width:16px;height:16px;stroke:var(--muted);transition:transform .2s}
+  .chathead:hover .toggle{background:var(--surface-2)}
+  .chatcol.collapsed{height:auto}
+  .chatcol.collapsed .chatbody,.chatcol.collapsed .chatinput{display:none}
+  .chatcol.collapsed .chathead .toggle svg{transform:rotate(180deg)}
   .chatbody{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:var(--surface)}
   .msg{max-width:92%;padding:13px 16px;border-radius:18px;font-size:16px;line-height:1.5;animation:pop .25s ease}
   @keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -259,15 +265,6 @@
     <div class="step-head">
       <h1>Monday Morning Brief</h1>
       <span class="sub">Monday · July 14, 2026 · 6:45 AM ET</span>
-    </div>
-
-    <div class="meeting-callout">
-      <div class="mc-ic">ITG</div>
-      <div class="mc-body">
-        <div class="mc-label">The Vision</div>
-        <div class="mc-text">An agentic CRM that guides a tobacco sales rep through their day — from the moment they wake up, to walking into each store, to competitive analysis. <b>Relationship building at scale.</b></div>
-        <div class="mc-addr"><b>What this chapter shows</b>Marcus didn't open a dashboard. The CRM ranked his day, with context on why each account needs attention and what to say when he walks in.</div>
-      </div>
     </div>
 
     <div class="max-say">
@@ -765,8 +762,8 @@
   </section>
 </div>
 
-<aside class="chatcol">
-  <div class="chathead"><span class="dot"></span>CIQ Agent · Active</div>
+<aside class="chatcol" id="chatcol">
+  <div class="chathead" onclick="toggleChat()"><span class="dot"></span>CIQ Agent · Active<span class="toggle"><i data-lucide="chevron-down"></i></span></div>
   <div class="chatbody">
     <div class="msg max">
       <div class="who">CIQ</div>
@@ -796,25 +793,18 @@
 </aside>
 </main>
 
-<div class="dock">
-  <div class="prompt">
-    <div class="who">Demo Flow</div>
-    Click through the chapters above to see how CIQ guides a tobacco sales rep through their day — from morning brief to in-store visits to competitive response.
-  </div>
-  <span class="counter">Chapter <span id="currentStep">1</span> of 5</span>
-  <button class="btn sec" id="prevBtn" disabled>← Previous</button>
-  <button class="btn" id="nextBtn">Next →</button>
-</div>
 
 <script>
 // Initialize Lucide icons
 lucide.createIcons();
 
+// Toggle chat panel
+function toggleChat() {
+  document.getElementById('chatcol').classList.toggle('collapsed');
+}
+
 const steps = document.querySelectorAll('.step');
 const chaps = document.querySelectorAll('.chap');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const counter = document.getElementById('currentStep');
 let current = 1;
 
 function showStep(n) {
@@ -822,18 +812,12 @@ function showStep(n) {
   chaps.forEach(c => c.classList.remove('active'));
   document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
   document.querySelector(`.chap[data-step="${n}"]`).classList.add('active');
-  counter.textContent = n;
-  prevBtn.disabled = n === 1;
-  nextBtn.disabled = n === 5;
   current = n;
 }
 
 chaps.forEach(c => {
   c.addEventListener('click', () => showStep(parseInt(c.dataset.step)));
 });
-
-prevBtn.addEventListener('click', () => { if (current > 1) showStep(current - 1); });
-nextBtn.addEventListener('click', () => { if (current < 5) showStep(current + 1); });
 
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' && current < 5) showStep(current + 1);
